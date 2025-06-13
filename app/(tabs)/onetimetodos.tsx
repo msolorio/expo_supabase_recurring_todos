@@ -2,8 +2,10 @@ import React from "react";
 import { Session } from "@supabase/supabase-js";
 import { View, Text, StyleSheet, Button } from "react-native";
 import { supabase } from "../lib/supabase";
+import { useAuth } from "../auth/authContext";
 
-export default function Home({ session }: { session: Session }) {
+export default function Home() {
+  const { session } = useAuth() as unknown as { session: Session };
   console.log("session.user.id", session.user.id);
 
   async function addOneTimeTodo({
@@ -101,8 +103,8 @@ export default function Home({ session }: { session: Session }) {
   }
 
   return (
-    <>
-      <View style={styles.container}>
+    <View style={styles.container}>
+      <View>
         <Text style={styles.mt20}>Home</Text>
 
         <Button
@@ -152,14 +154,14 @@ export default function Home({ session }: { session: Session }) {
       <View style={styles.verticallySpaced}>
         <Button title="Sign Out" onPress={() => supabase.auth.signOut()} />
       </View>
-    </>
+    </View>
   );
 }
 
 const styles = StyleSheet.create({
   container: {
     marginTop: 40,
-    padding: 12,
+    padding: 40,
   },
   verticallySpaced: {
     paddingTop: 4,
