@@ -6,18 +6,28 @@ import { supabase } from "../lib/supabase";
 export default function Home({ session }: { session: Session }) {
   console.log("session.user.id", session.user.id);
 
-  async function addOneTimeTodo() {
-    console.log("called addOneTimeTodo");
-
+  async function addOneTimeTodo({
+    title,
+    description,
+    category,
+    priority,
+    date,
+  }: {
+    title: string;
+    description: string;
+    category: "CONTENT" | "ADMIN" | "PERSONAL";
+    priority: boolean;
+    date: Date;
+  }) {
     const { data, error } = await supabase
       .from("onetimetodoitem")
       .insert({
         user_id: session.user.id,
-        title: "Todo 3",
-        description: "Description 3",
-        category: "CONTENT",
-        priority: true,
-        date: new Date(),
+        title,
+        description,
+        category,
+        priority,
+        date,
       })
       .select();
 
@@ -67,10 +77,13 @@ export default function Home({ session }: { session: Session }) {
     }
   }
 
-  async function updateOneTimeTodoCompleted(
-    todoId: number,
-    completed: boolean
-  ) {
+  async function updateOneTimeTodoCompleted({
+    todoId,
+    completed,
+  }: {
+    todoId: number;
+    completed: boolean;
+  }) {
     const { data, error } = await supabase
       .from("onetimetodoitem")
       .update({ completed })
@@ -92,26 +105,47 @@ export default function Home({ session }: { session: Session }) {
       <View style={styles.container}>
         <Text style={styles.mt20}>Home</Text>
 
-        <Button title="Add one time todo" onPress={() => addOneTimeTodo()} />
+        <Button
+          title="Add one time todo"
+          onPress={() =>
+            addOneTimeTodo({
+              title: "Todo 1",
+              description: "Description 1",
+              category: "CONTENT",
+              priority: true,
+              date: new Date(),
+            })
+          }
+        />
 
         <Button
           title="Return todos for day"
-          onPress={() => getTodosForDay("2025-06-12")}
+          onPress={() => getTodosForDay("2025-06-13")}
         />
 
         <Button
           title="Edit one time todo"
-          onPress={() => editOneTimeTodo(1, { title: "Updated Todooo" })}
+          onPress={() => editOneTimeTodo(3, { title: "Updated Todooo" })}
         />
 
         <Button
           title="Update one time todo completed true"
-          onPress={() => updateOneTimeTodoCompleted(1, true)}
+          onPress={() =>
+            updateOneTimeTodoCompleted({
+              todoId: 3,
+              completed: true,
+            })
+          }
         />
 
         <Button
           title="Update one time todo completed false"
-          onPress={() => updateOneTimeTodoCompleted(1, false)}
+          onPress={() =>
+            updateOneTimeTodoCompleted({
+              todoId: 3,
+              completed: false,
+            })
+          }
         />
       </View>
 
