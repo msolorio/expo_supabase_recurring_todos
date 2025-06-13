@@ -4,7 +4,7 @@ import { View, Text, StyleSheet, Button } from "react-native";
 import { supabase } from "../lib/supabase";
 import { useAuth } from "../auth/authContext";
 
-export default function Home() {
+export default function OneTimeTodos() {
   const { session } = useAuth() as unknown as { session: Session };
   console.log("session.user.id", session.user.id);
 
@@ -105,7 +105,7 @@ export default function Home() {
   return (
     <View style={styles.container}>
       <View>
-        <Text style={styles.mt20}>Home</Text>
+        <Text style={styles.mt20}>One Time Todos</Text>
 
         <Button
           title="Add one time todo"

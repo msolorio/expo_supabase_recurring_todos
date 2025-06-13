@@ -1,22 +1,7 @@
 import Ionicons from "@expo/vector-icons/Ionicons";
 import { Tabs } from "expo-router";
-import { useState, useEffect } from "react";
-import { supabase } from "../lib/supabase";
-// import Auth from "../auth/Auth";
-// import { View } from "react-native";
-import { Session } from "@supabase/supabase-js";
 
 export default function TabLayout() {
-  const [session, setSession] = useState<Session | null>(null);
-  useEffect(() => {
-    supabase.auth.getSession().then(({ data: { session } }) => {
-      setSession(session);
-    });
-    supabase.auth.onAuthStateChange((_event, session) => {
-      setSession(session);
-    });
-  }, []);
-
   return (
     <Tabs
       screenOptions={{
@@ -33,7 +18,6 @@ export default function TabLayout() {
     >
       <Tabs.Screen
         name="onetimetodos"
-        initialParams={{ session: session }}
         options={{
           title: "One Time Todos",
           tabBarIcon: ({ color, focused }) => (
@@ -45,10 +29,10 @@ export default function TabLayout() {
           ),
         }}
       />
-      {/* <Tabs.Screen
-        name="about"
+      <Tabs.Screen
+        name="recurringtodos"
         options={{
-          title: "About",
+          title: "Recurring Todos",
           tabBarIcon: ({ color, focused }) => (
             <Ionicons
               name={focused ? "information-sharp" : "information-outline"}
@@ -57,7 +41,7 @@ export default function TabLayout() {
             />
           ),
         }}
-      /> */}
+      />
     </Tabs>
   );
 }
