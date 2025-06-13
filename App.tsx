@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { supabase } from "./app/lib/supabase";
 import Auth from "./app/auth/Auth";
-import Home from "./app/views/Home";
+import OneTimeTodo from "./app/views/OneTimeTodo";
 import { View } from "react-native";
 import { Session } from "@supabase/supabase-js";
 export default function App() {
@@ -17,7 +17,7 @@ export default function App() {
   return (
     <View>
       {session && session.user ? (
-        <Home key={session.user.id} session={session} />
+        <OneTimeTodo key={session.user.id} session={session} />
       ) : (
         <Auth />
       )}

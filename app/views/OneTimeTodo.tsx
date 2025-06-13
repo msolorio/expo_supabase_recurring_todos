@@ -42,6 +42,51 @@ export default function Home({ session }: { session: Session }) {
     }
   }
 
+  async function editOneTimeTodo(
+    todoId: number,
+    updates: {
+      title?: string;
+      description?: string;
+      category?: "CONTENT" | "ADMIN" | "PERSONAL";
+      priority?: boolean;
+    }
+  ) {
+    const { data, error } = await supabase
+      .from("onetimetodoitem")
+      .update(updates)
+      .eq("id", todoId)
+      .eq("user_id", session.user.id)
+      .select();
+
+    if (error) {
+      console.error("Error updating todo:", error);
+      return null;
+    } else {
+      console.log("Todo updated successfully:", data);
+      return data;
+    }
+  }
+
+  async function updateOneTimeTodoCompleted(
+    todoId: number,
+    completed: boolean
+  ) {
+    const { data, error } = await supabase
+      .from("onetimetodoitem")
+      .update({ completed })
+      .eq("id", todoId)
+      .eq("user_id", session.user.id)
+      .select();
+
+    if (error) {
+      console.error("Error updating todo completed status:", error);
+      return null;
+    } else {
+      console.log("Todo completed status updated successfully:", data);
+      return data;
+    }
+  }
+
   return (
     <>
       <View style={styles.container}>
@@ -52,6 +97,21 @@ export default function Home({ session }: { session: Session }) {
         <Button
           title="Return todos for day"
           onPress={() => getTodosForDay("2025-06-12")}
+        />
+
+        <Button
+          title="Edit one time todo"
+          onPress={() => editOneTimeTodo(1, { title: "Updated Todooo" })}
+        />
+
+        <Button
+          title="Update one time todo completed true"
+          onPress={() => updateOneTimeTodoCompleted(1, true)}
+        />
+
+        <Button
+          title="Update one time todo completed false"
+          onPress={() => updateOneTimeTodoCompleted(1, false)}
         />
       </View>
 
