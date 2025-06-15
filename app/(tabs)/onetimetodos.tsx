@@ -22,7 +22,7 @@ export default function OneTimeTodos() {
     date: Date;
   }) {
     const { data, error } = await supabase
-      .from("onetimetodoitem")
+      .from("one_time_todo_items")
       .insert({
         user_id: session.user.id,
         title,
@@ -42,7 +42,7 @@ export default function OneTimeTodos() {
 
   async function getTodosForDay(date: string) {
     const { data, error } = await supabase
-      .from("onetimetodoitem")
+      .from("one_time_todo_items")
       .select()
       .eq("user_id", session.user.id)
       .eq("date", date);
@@ -64,7 +64,7 @@ export default function OneTimeTodos() {
     }
   ) {
     const { data, error } = await supabase
-      .from("onetimetodoitem")
+      .from("one_time_todo_items")
       .update(updates)
       .eq("id", todoId)
       .eq("user_id", session.user.id)
@@ -87,7 +87,7 @@ export default function OneTimeTodos() {
     completed: boolean;
   }) {
     const { data, error } = await supabase
-      .from("onetimetodoitem")
+      .from("one_time_todo_items")
       .update({ completed })
       .eq("id", todoId)
       .eq("user_id", session.user.id)

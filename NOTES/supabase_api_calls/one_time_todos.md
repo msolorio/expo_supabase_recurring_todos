@@ -3,7 +3,7 @@
 ### Add one time todo
 ```ts
 const { data, error } = await supabase
-  .from("onetimetodoitem")
+  .from("one_time_todo_items")
   .insert({
     user_id: session.user.id,
     title: "Todo 3",
@@ -19,7 +19,7 @@ Purpose: Creates a new one-time todo item in the database with specified details
 ### Get todos for specific day
 ```ts
 const { data, error } = await supabase
-  .from("onetimetodoitem")
+  .from("one_time_todo_items")
   .select()
   .eq("user_id", session.user.id)
   .eq("date", date);
@@ -29,7 +29,7 @@ Purpose: Retrieves all todo items for a specific date for the current user.
 ### Update one time todo
 ```ts
 const { data, error } = await supabase
-  .from("onetimetodoitem")
+  .from("one_time_todo_items")
   .update(updates)
   .eq("id", todoId)
   .eq("user_id", session.user.id)
@@ -40,7 +40,7 @@ Purpose: Updates specific fields of an existing todo item while ensuring it belo
 ### Update todo completion status
 ```ts
 const { data, error } = await supabase
-  .from("onetimetodoitem")
+  .from("one_time_todo_items")
   .update({ completed })
   .eq("id", todoId)
   .eq("user_id", session.user.id)
