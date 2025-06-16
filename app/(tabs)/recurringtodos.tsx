@@ -3,6 +3,25 @@ import { useAuth } from "../auth/authContext";
 import { Session } from "@supabase/supabase-js";
 import { supabase } from "../lib/supabase";
 
+type DayOfWeek =
+  | "MONDAY"
+  | "TUESDAY"
+  | "WEDNESDAY"
+  | "THURSDAY"
+  | "FRIDAY"
+  | "SATURDAY"
+  | "SUNDAY";
+
+const DaysOfWeek: DayOfWeek[] = [
+  "SUNDAY",
+  "MONDAY",
+  "TUESDAY",
+  "WEDNESDAY",
+  "THURSDAY",
+  "FRIDAY",
+  "SATURDAY",
+];
+
 export default function RecurringTodos() {
   const { session } = useAuth() as unknown as { session: Session };
   console.log("session.user.id", session.user.id);
@@ -68,6 +87,34 @@ export default function RecurringTodos() {
     }
   }
 
+  async function getRecurringTodosForDay({
+    dayOfWeek,
+    dayOfMonth,
+  }: {
+    dayOfWeek: DayOfWeek;
+    dayOfMonth: number;
+  }) {
+    const dayOfWeekNum = DaysOfWeek.indexOf(dayOfWeek);
+
+    const { data, error } = await supabase
+      .from("recurring_todos")
+      .select()
+      .eq("user_id", session.user.id)
+      .or(
+        `recurrence_type.eq.DAILY,` +
+          `and(recurrence_type.eq.WEEKLY,recurrence_value.eq.${dayOfWeekNum}),` +
+          `and(recurrence_type.eq.MONTHLY,recurrence_value.eq.${dayOfMonth})`
+      );
+
+    if (error) {
+      console.error("Error getting todos for day:", error);
+      return null;
+    } else {
+      console.log("Todos for day:", data);
+      return data;
+    }
+  }
+
   return (
     <View style={styles.container}>
       <Text style={styles.mt20}>Recurring Todos</Text>
@@ -81,8 +128,8 @@ export default function RecurringTodos() {
               description: "Test",
               category: "CONTENT",
               priority: false,
-              recurrence_type: "DAILY",
-              recurrence_value: 0,
+              recurrence_type: "WEEKLY",
+              recurrence_value: 1,
             });
           }}
         />
@@ -92,6 +139,15 @@ export default function RecurringTodos() {
             addRecurringTodoCompletedInstance({
               recurringTodoId: 1,
               date: new Date(),
+            });
+          }}
+        />
+        <Button
+          title="Get todos for day"
+          onPress={() => {
+            getRecurringTodosForDay({
+              dayOfWeek: "MONDAY",
+              dayOfMonth: 16,
             });
           }}
         />

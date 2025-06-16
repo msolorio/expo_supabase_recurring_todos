@@ -42,3 +42,17 @@ const { data, error } = await supabase
 
 Purpose: Adds a completed instance of a recurring todo for a specific date.
 
+### Retrieve recurring todos for day
+```ts
+const { data, error } = await supabase
+  .from("recurring_todos")
+  .select()
+  .eq("user_id", session.user.id)
+  .or(
+    `recurrence_type.eq.DAILY,` +
+      `and(recurrence_type.eq.WEEKLY,recurrence_value.eq.${dayOfWeekNum}),` +
+      `and(recurrence_type.eq.MONTHLY,recurrence_value.eq.${dayOfMonth})`
+  );
+```
+
+Purpose: Retrieves all recurring todos for a specific day, pulling recurring todos that are daily, weekly, or monthly.
