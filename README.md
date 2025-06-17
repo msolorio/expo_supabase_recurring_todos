@@ -1,14 +1,15 @@
 # Expo Supabase Demo
 
-This repo demonstrates Supabase integration with an Expo app.
+Demonstrates Supabase integration with an Expo app.
 
 ## Supabase API Calls (queries)
 
-This documents the Supabase API calls / queries that can be made to the Supabase backend.
+The Supabase API calls / queries that can be made to the Supabase backend.
 
 ### One Time Todos
 
 #### Add one time todo
+Creates a new one-time todo item in the database with specified details.
 ```ts
 const { data, error } = await supabase
   .from("one_time_todo_items")
@@ -22,11 +23,11 @@ const { data, error } = await supabase
   })
   .select();
 ```
-Purpose: Creates a new one-time todo item in the database with specified details.
 
 ---
 
 #### Get one time todos for specific day
+Retrieves all one-time todo items for a specific date for the current user.
 ```ts
 const { data, error } = await supabase
   .from("one_time_todo_items")
@@ -34,11 +35,11 @@ const { data, error } = await supabase
   .eq("user_id", session.user.id)
   .eq("date", date);
 ```
-Purpose: Retrieves all todo items for a specific date for the current user.
 
 ---
 
 #### Update one time todo
+Updates specific fields of an existing one-time todo item while ensuring it belongs to the current user.
 ```ts
 const { data, error } = await supabase
   .from("one_time_todo_items")
@@ -47,11 +48,11 @@ const { data, error } = await supabase
   .eq("user_id", session.user.id)
   .select();
 ```
-Purpose: Updates specific fields of an existing todo item while ensuring it belongs to the current user.
 
 ---
 
 #### Update todo completion status
+Updates the completion status of a one-time todo item while ensuring it belongs to the current user.
 ```ts
 const { data, error } = await supabase
   .from("one_time_todo_items")
@@ -60,13 +61,13 @@ const { data, error } = await supabase
   .eq("user_id", session.user.id)
   .select();
 ```
-Purpose: Updates the completion status of a todo item while ensuring it belongs to the current user.
 
 --- 
 
 ### Recurring Todos
 
 #### Add recurring todo
+Creates a new recurring todo item in the database with specified details including recurrence settings.
 ```ts
 const { data, error } = await supabase
   .from("recurring_todos")
@@ -81,7 +82,6 @@ const { data, error } = await supabase
   })
   .select();
 ```
-Purpose: Creates a new recurring todo item in the database with specified details including recurrence settings.
 
 Possible values for recurrence_type
 - 'DAILY'
@@ -98,6 +98,7 @@ Possible values for recurrence_value
 ---
 
 #### Add completed instance for a recurring todo
+Adds a completed instance of a recurring todo for a specific date.
 ```ts
 const { data, error } = await supabase
   .from("recurring_todo_completed_instances")
@@ -108,11 +109,11 @@ const { data, error } = await supabase
   .select();
 ```
 
-Purpose: Adds a completed instance of a recurring todo for a specific date.
 
 ---
 
 #### Retrieve recurring todos for day
+Retrieves all recurring todos for a specific day.
 ```ts
 const { data, error } = await supabase
   .from("recurring_todos")
@@ -124,10 +125,7 @@ const { data, error } = await supabase
       `and(recurrence_type.eq.MONTHLY,recurrence_value.eq.${dayOfMonth})`
   );
 ```
-
-Purpose: Retrieves all recurring todos for a specific day.
-
-This query pulls recurring todos with either
+Pulls recurring todos with either
 - recurrence type of 'DAILY'
 - recurrence type of 'WEEKLY' and recurrence value matching the day of the week for the day
 - recurrence type of 'MONTHLY' and recurrence value matching the day of the month for the day
