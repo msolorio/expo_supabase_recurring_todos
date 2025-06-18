@@ -2,6 +2,18 @@
 
 Demonstrates Supabase integration with an Expo app.
 
+## Setup
+
+1. Ensure you have the Expo Go mobile app installed on your phone.
+2. Clone the repository.
+3. Run `npm install` to install the dependencies.
+4. Run `npm start` to start the Expo server.
+5. Open up Expo Go on your phone and you should see an option to open the app.
+  - If you don't see the option, you can scan the QR code with the Expo Go app to open the app.
+
+## Supabase Setup
+
+
 ## Supabase API Calls (queries)
 
 The Supabase API calls / queries that can be made to the Supabase backend.
@@ -130,6 +142,17 @@ Pulls recurring todos with either
 - recurrence type of 'WEEKLY' and recurrence value matching the day of the week for the day
 - recurrence type of 'MONTHLY' and recurrence value matching the day of the month for the day
 
+---
+
+#### Retrieve completed recurring todos for day
+Retrieves instances where a todo has been completed for a specific date and for list of recurring todo ids.
+```ts
+const { data, error } = await supabase
+  .from("recurring_todo_completed_instances")
+  .select()
+  .eq("date", date.toISOString().split("T")[0])
+  .in("recurring_todo_id", recurringTodoIds);
+```
 ---
 
 ## Database tables

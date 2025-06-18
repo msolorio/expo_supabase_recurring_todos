@@ -115,6 +115,28 @@ export default function RecurringTodos() {
     }
   }
 
+  async function getCompletedRecurringTodosForDay({
+    date,
+    recurringTodoIds,
+  }: {
+    date: Date;
+    recurringTodoIds: number[];
+  }) {
+    const { data, error } = await supabase
+      .from("recurring_todo_completed_instances")
+      .select()
+      .eq("date", date.toISOString().split("T")[0])
+      .in("recurring_todo_id", recurringTodoIds);
+
+    if (error) {
+      console.error("Error getting completed todos for day:", error);
+      return null;
+    } else {
+      console.log("Completed todos for day:", data);
+      return data;
+    }
+  }
+
   return (
     <View style={styles.container}>
       <Text style={styles.mt20}>Recurring Todos</Text>
@@ -138,7 +160,7 @@ export default function RecurringTodos() {
           onPress={() => {
             addRecurringTodoCompletedInstance({
               recurringTodoId: 1,
-              date: new Date(),
+              date: new Date("2025-06-16"),
             });
           }}
         />
@@ -148,6 +170,15 @@ export default function RecurringTodos() {
             getRecurringTodosForDay({
               dayOfWeek: "MONDAY",
               dayOfMonth: 16,
+            });
+          }}
+        />
+        <Button
+          title="Get completed todos for day"
+          onPress={() => {
+            getCompletedRecurringTodosForDay({
+              date: new Date("2025-06-16"),
+              recurringTodoIds: [1],
             });
           }}
         />
