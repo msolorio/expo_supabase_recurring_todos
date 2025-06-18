@@ -11,8 +11,10 @@ Demonstrates Supabase integration with an Expo app.
 5. Open up Expo Go on your phone and you should see an option to open the app.
   - If you don't see the option, you can scan the QR code with the Expo Go app to open the app.
 
-## Supabase Setup
+## Supabase Integration
+Clicking each of the buttons will trigger a Supabase API call to the Supabase backend and you can see the result of the queries logged in the console.
 
+You can find the implementations in `/app/(tabs)/onetimetodos.tsx` and `/app/(tabs)/recurringtodos.tsx`.
 
 ## Supabase API Calls (queries)
 
