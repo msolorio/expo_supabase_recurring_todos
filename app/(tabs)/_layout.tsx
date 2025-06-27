@@ -48,6 +48,19 @@ export default function TabLayout() {
           ),
         }}
       />
+      <Tabs.Screen
+        name="atelier"
+        options={{
+          title: "Atelier",
+          tabBarIcon: ({ color, focused }) => (
+            <Ionicons
+              name={focused ? "menu-sharp" : "menu-outline"}
+              color={color}
+              size={24}
+            />
+          ),
+        }}
+      />
     </Tabs>
   );
 }
