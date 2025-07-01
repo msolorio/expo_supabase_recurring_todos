@@ -23,3 +23,4 @@ The Supabase API calls / queries that can be made to the Supabase backend and th
 [ATELIER](README_DOCS/ATELIER.md)
 
 [TODOS](README_DOCS/TODOS.md)
+

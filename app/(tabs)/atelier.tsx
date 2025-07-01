@@ -196,6 +196,8 @@ export default function atelier() {
     }
   };
 
+  const uploadImage = async () => {};
+
   return (
     <View style={styles.container}>
       <Text style={styles.mt20}>Atelier</Text>
@@ -241,6 +243,7 @@ export default function atelier() {
           })
         }
       />
+      <Button title="Upload an image" onPress={() => uploadImage()} />
     </View>
   );
 }
