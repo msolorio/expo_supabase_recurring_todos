@@ -2,7 +2,46 @@
 Documents content queries and database tables.
 
 ### Add a content item
+This involves having the user select an image from their library and uploading it to Supabase storage.
+
+```ts
+const result = await ImagePicker.launchImageLibraryAsync({
+  mediaTypes: ImagePicker.MediaTypeOptions.Images, // Restrict to only images
+  allowsMultipleSelection: false, // Can only select one image
+  allowsEditing: true, // Allows the user to crop / rotate their photo before uploading it
+  quality: 1,
+  exif: false, // We don't want nor need that data.
+});
+
+if (result.canceled || !result.assets || result.assets.length === 0) {
+  console.log("User cancelled image picker.");
+  return;
+}
+
+const image = result.assets[0];
+console.log("Got image", image);
+
+if (!image.uri) {
+  throw new Error("No image uri!"); // Realistically, this should never happen, but just in case...
+}
+
+const arraybuffer = await fetch(image.uri).then((res) => res.arrayBuffer());
+
+const fileExt = image.uri?.split(".").pop()?.toLowerCase() ?? "jpeg";
+const path = `${Date.now()}.${fileExt}`;
+
+const { data: imageData, error: imageError } = await supabase.storage
+  .from("content-images")
+  .upload(path, arraybuffer, {
+    contentType: `image/${fileExt}`,
+    upsert: true,
+  });
+```
+
+
 Creates a new content item for the current user.
+
+We take the image url from imageData.path and add it to the content item.
 ```ts
 const { data, error } = await supabase
   .from("content_items")
@@ -12,6 +51,7 @@ const { data, error } = await supabase
       post_title: postTitle,
       platform,
       post_date: postDate,
+      image_url: imageData?.path ?? null,
       inspiration,
       screen_text: screenText,
       caption,
@@ -77,11 +117,13 @@ const editContentItem = async ({}) => {
 ```
 
 ### Mark content item completed
-Marks a content item as completed (placeholder function).
+Marks a content item as completed.
 ```ts
-const markContentItemCompleted = async ({}) => {
-  console.log("markContentItemCompleted");
-};
+const { data, error } = await supabase
+  .from("content_items")
+  .update({ completed: completed })
+  .eq("id", contentItemId)
+  .eq("user_id", session.user.id);
 ```
 
 ### Tables for content items

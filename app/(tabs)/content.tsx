@@ -1,4 +1,5 @@
 import { View, Text, Button, StyleSheet } from "react-native";
+import * as ImagePicker from "expo-image-picker";
 import { supabase } from "../lib/supabase";
 import { Session } from "@supabase/supabase-js";
 import { useAuth } from "../auth/authContext";
@@ -27,6 +28,11 @@ type GetContentItemsForMonthProps = {
   month: number;
 };
 
+type UpdateContentItemCompletedProps = {
+  contentItemId: string;
+  completed: boolean;
+};
+
 export default function content() {
   const { session } = useAuth() as unknown as { session: Session };
 
@@ -38,6 +44,41 @@ export default function content() {
     screenText,
     caption,
   }: AddContentItemProps) => {
+    const result = await ImagePicker.launchImageLibraryAsync({
+      mediaTypes: ImagePicker.MediaTypeOptions.Images, // Restrict to only images
+      allowsMultipleSelection: false, // Can only select one image
+      allowsEditing: true, // Allows the user to crop / rotate their photo before uploading it
+      quality: 1,
+      exif: false, // We don't want nor need that data.
+    });
+
+    if (result.canceled || !result.assets || result.assets.length === 0) {
+      console.log("User cancelled image picker.");
+      return;
+    }
+
+    const image = result.assets[0];
+    console.log("Got image", image);
+
+    if (!image.uri) {
+      throw new Error("No image uri!"); // Realistically, this should never happen, but just in case...
+    }
+
+    const arraybuffer = await fetch(image.uri).then((res) => res.arrayBuffer());
+
+    const fileExt = image.uri?.split(".").pop()?.toLowerCase() ?? "jpeg";
+    const path = `${Date.now()}.${fileExt}`;
+
+    const { data: imageData, error: imageError } = await supabase.storage
+      .from("content-images")
+      .upload(path, arraybuffer, {
+        contentType: `image/${fileExt}`,
+        upsert: true,
+      });
+
+    console.log("imageData", imageData);
+    console.log("imageError", imageError);
+
     const { data, error } = await supabase
       .from("content_items")
       .insert([
@@ -46,6 +87,7 @@ export default function content() {
           post_title: postTitle,
           platform,
           post_date: postDate,
+          image_url: imageData?.path ?? null,
           inspiration,
           screen_text: screenText,
           caption,
@@ -139,8 +181,24 @@ export default function content() {
     console.log("editContentItem");
   };
 
-  const markContentItemCompleted = async ({}) => {
-    console.log("markContentItemCompleted");
+  const updateContentItemCompleted = async ({
+    contentItemId,
+    completed,
+  }: UpdateContentItemCompletedProps) => {
+    const { data, error } = await supabase
+      .from("content_items")
+      .update({ completed: completed })
+      .eq("id", contentItemId)
+      .eq("user_id", session.user.id);
+    // .select();
+
+    if (error) {
+      console.error("Error updating content item:", error);
+      return;
+    } else {
+      console.log("Content item updated successfully:", data);
+      return data;
+    }
   };
 
   return (
@@ -153,13 +211,14 @@ export default function content() {
           addContentItem({
             postTitle: "Post Title",
             platform: "INSTAGRAM",
-            postDate: "2025-01-08",
-            inspiration: "Inspiration",
-            screenText: "Screen Text",
-            caption: "Caption",
+            postDate: "2025-01-01",
+            inspiration: "snail",
+            screenText: "pet snail",
+            caption: "pet snail",
           })
         }
       />
+
       <Button
         title="View Content Items for Day"
         onPress={() => getContentItemsForDay({ date: "2025-01-01" })}
@@ -175,7 +234,12 @@ export default function content() {
       <Button title="Edit Content Item" onPress={() => editContentItem({})} />
       <Button
         title="Mark Content Item Completed"
-        onPress={() => markContentItemCompleted({})}
+        onPress={() =>
+          updateContentItemCompleted({
+            contentItemId: "3",
+            completed: true,
+          })
+        }
       />
     </View>
   );
